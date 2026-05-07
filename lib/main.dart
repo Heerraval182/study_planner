@@ -35,62 +35,50 @@ class StudyPlannerApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Study Planner',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData(
         useMaterial3: true,
-        textTheme: GoogleFonts.outfitTextTheme(Theme.of(context).textTheme),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF4F46E5), // Indigo 600
-          secondary: const Color(0xFF10B981), // Emerald 500
-          tertiary: const Color(0xFFF43F5E), // Rose 500
-          surface: const Color(0xFFF8FAFC), // Slate 50
-          background: const Color(0xFFF1F5F9), // Slate 100
-          brightness: Brightness.light,
+        brightness: Brightness.dark,
+        textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme).copyWith(
+          bodyLarge: const TextStyle(color: Colors.white),
+          bodyMedium: const TextStyle(color: Colors.white70),
         ),
-        scaffoldBackgroundColor: const Color(0xFFF1F5F9),
+        scaffoldBackgroundColor: Colors.transparent, // Background handled by BackgroundWrapper
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF6366F1), // Neon Indigo
+          secondary: Color(0xFF14B8A6), // Teal
+          surface: Colors.transparent,
+          background: Colors.transparent,
+        ),
         appBarTheme: const AppBarTheme(
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
-          foregroundColor: Color(0xFF0F172A), // Slate 900
+          foregroundColor: Colors.white,
           titleTextStyle: TextStyle(
-            fontSize: 22,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF0F172A),
+            color: Colors.white,
           ),
-        ),
-        cardTheme: CardThemeData(
-          elevation: 4,
-          shadowColor: Colors.black.withValues(alpha: 0.1),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          color: Colors.white,
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: Colors.white.withValues(alpha: 0.1),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
+            borderSide: const BorderSide(color: Color(0xFF14B8A6), width: 2),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
+          labelStyle: const TextStyle(color: Colors.white70),
+          hintStyle: const TextStyle(color: Colors.white50),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         ),
       ),
       home: const MainScreen(),

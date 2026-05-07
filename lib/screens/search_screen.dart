@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
 import '../models/models.dart';
+import '../widgets/glass_card.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -17,12 +18,12 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('Search & Filter'),
       ),
       body: Consumer<StudyProvider>(
         builder: (context, provider, child) {
-          // Gather all topics with their subjects
           final List<Map<String, dynamic>> allTopics = [];
           for (var s in provider.subjects) {
             for (var t in s.topics) {
@@ -30,7 +31,6 @@ class _SearchScreenState extends State<SearchScreen> {
             }
           }
 
-          // Filter topics
           final filteredTopics = allTopics.where((item) {
             final topic = item['topic'] as Topic;
             final matchesQuery = topic.name.toLowerCase().contains(_searchQuery.toLowerCase());
@@ -43,30 +43,13 @@ class _SearchScreenState extends State<SearchScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 20,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
+                TextField(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    hintText: 'Search topics...',
+                    prefixIcon: Icon(Icons.search_rounded, color: Colors.white70),
                   ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search topics...',
-                      prefixIcon: const Icon(Icons.search_rounded),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 20),
-                    ),
-                    onChanged: (val) => setState(() => _searchQuery = val),
-                  ),
+                  onChanged: (val) => setState(() => _searchQuery = val),
                 ),
                 const SizedBox(height: 24),
                 SingleChildScrollView(
@@ -91,9 +74,9 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.search_off_rounded, size: 64, color: Colors.grey.shade300),
+                              Icon(Icons.search_off_rounded, size: 64, color: Colors.white.withValues(alpha: 0.2)),
                               const SizedBox(height: 16),
-                              Text('No topics found', style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontWeight: FontWeight.bold)),
+                              const Text('No topics found', style: TextStyle(fontSize: 18, color: Colors.white70, fontWeight: FontWeight.bold)),
                             ],
                           ),
                         )
@@ -110,45 +93,35 @@ class _SearchScreenState extends State<SearchScreen> {
                             switch (topic.status) {
                               case TopicStatus.completed:
                                 statusColor = const Color(0xFF10B981);
-                                statusBgColor = const Color(0xFFD1FAE5);
+                                statusBgColor = const Color(0xFF10B981).withValues(alpha: 0.2);
                                 break;
                               case TopicStatus.inProgress:
                                 statusColor = const Color(0xFFF59E0B);
-                                statusBgColor = const Color(0xFFFEF3C7);
+                                statusBgColor = const Color(0xFFF59E0B).withValues(alpha: 0.2);
                                 break;
                               case TopicStatus.notStarted:
                               default:
                                 statusColor = const Color(0xFF94A3B8);
-                                statusBgColor = const Color(0xFFF1F5F9);
+                                statusBgColor = const Color(0xFF94A3B8).withValues(alpha: 0.2);
                             }
 
-                            return Container(
+                            return GlassCard(
                               margin: const EdgeInsets.only(bottom: 16),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.03),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                contentPadding: EdgeInsets.zero,
                                 leading: Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   child: Icon(Icons.topic_rounded, color: Theme.of(context).colorScheme.primary),
                                 ),
-                                title: Text(topic.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                title: Text(topic.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
                                 subtitle: Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                                  child: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white70)),
                                 ),
                                 trailing: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -180,31 +153,18 @@ class _SearchScreenState extends State<SearchScreen> {
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon, 
-            size: 16, 
-            color: isSelected ? Colors.white : Colors.grey.shade600
-          ),
+          Icon(icon, size: 16, color: isSelected ? Colors.white : Colors.white70),
           const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isSelected ? Colors.white : Colors.grey.shade700,
-            ),
-          ),
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold, color: isSelected ? Colors.white : Colors.white70)),
         ],
       ),
       selected: isSelected,
       onSelected: (_) => setState(() => _filterStatus = status),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white.withValues(alpha: 0.1),
       selectedColor: Theme.of(context).colorScheme.primary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: isSelected ? Colors.transparent : Colors.grey.shade200,
-          width: 1.5,
-        ),
+        side: BorderSide(color: isSelected ? Colors.transparent : Colors.white24, width: 1.0),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
     );

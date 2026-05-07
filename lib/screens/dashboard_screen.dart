@@ -3,23 +3,28 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
 import '../models/models.dart';
+import '../widgets/glass_card.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('Dashboard'),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
-              backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
-              child: Icon(Icons.person, color: colorScheme.primary),
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white30),
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+              padding: const EdgeInsets.all(8),
+              child: const Icon(Icons.person_rounded, color: Colors.white),
             ),
           )
         ],
@@ -39,18 +44,18 @@ class DashboardScreen extends StatelessWidget {
 
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Good Morning,',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                  style: TextStyle(fontSize: 18, color: Colors.white70),
                 ),
                 const SizedBox(height: 4),
                 const Text(
                   'Ready to crush your goals?',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, height: 1.2),
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, height: 1.2, color: Colors.white),
                 ),
                 const SizedBox(height: 24),
                 GridView.count(
@@ -60,44 +65,20 @@ class DashboardScreen extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    _buildGradientCard(
-                      context, 'Subjects', '$totalSubjects', Icons.menu_book_rounded,
-                      [const Color(0xFF4F46E5), const Color(0xFF818CF8)],
-                    ),
-                    _buildGradientCard(
-                      context, 'Completed', '$completedTopics', Icons.task_alt_rounded,
-                      [const Color(0xFF10B981), const Color(0xFF34D399)],
-                    ),
-                    _buildGradientCard(
-                      context, 'Pending', '$pendingTopics', Icons.pending_actions_rounded,
-                      [const Color(0xFFF59E0B), const Color(0xFFFCD34D)],
-                    ),
-                    _buildGradientCard(
-                      context, 'Sessions', '${provider.sessions.length}', Icons.timer_rounded,
-                      [const Color(0xFFEC4899), const Color(0xFFF472B6)],
-                    ),
+                    _buildGlassSummaryCard('Subjects', '$totalSubjects', Icons.menu_book_rounded, const Color(0xFF6366F1)),
+                    _buildGlassSummaryCard('Completed', '$completedTopics', Icons.task_alt_rounded, const Color(0xFF14B8A6)),
+                    _buildGlassSummaryCard('Pending', '$pendingTopics', Icons.pending_actions_rounded, const Color(0xFFF59E0B)),
+                    _buildGlassSummaryCard('Sessions', '${provider.sessions.length}', Icons.timer_rounded, const Color(0xFFD946EF)),
                   ],
                 ),
                 const SizedBox(height: 32),
                 const Text(
                   'Weekly Activity',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 const SizedBox(height: 16),
-                Container(
-                  height: 260,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      )
-                    ]
-                  ),
-                  padding: const EdgeInsets.all(20.0),
+                GlassCard(
+                  height: 280,
                   child: BarChart(
                     BarChartData(
                       alignment: BarChartAlignment.spaceAround,
@@ -114,11 +95,7 @@ class DashboardScreen extends StatelessWidget {
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: Text(
                                     days[value.toInt()], 
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black54,
-                                      fontSize: 13
-                                    )
+                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white70, fontSize: 13)
                                   ),
                                 );
                               }
@@ -133,13 +110,13 @@ class DashboardScreen extends StatelessWidget {
                       borderData: FlBorderData(show: false),
                       gridData: const FlGridData(show: false),
                       barGroups: [
-                        _buildAnimatedBar(0, 4, colorScheme.primary),
-                        _buildAnimatedBar(1, 6, colorScheme.primary),
-                        _buildAnimatedBar(2, 3, colorScheme.primary),
-                        _buildAnimatedBar(3, 8, colorScheme.primary),
-                        _buildAnimatedBar(4, 5, colorScheme.primary),
-                        _buildAnimatedBar(5, 7, colorScheme.primary),
-                        _buildAnimatedBar(6, 9, colorScheme.primary),
+                        _buildNeonBar(0, 4, const Color(0xFF14B8A6)),
+                        _buildNeonBar(1, 6, const Color(0xFF14B8A6)),
+                        _buildNeonBar(2, 3, const Color(0xFF14B8A6)),
+                        _buildNeonBar(3, 8, const Color(0xFF14B8A6)),
+                        _buildNeonBar(4, 5, const Color(0xFF14B8A6)),
+                        _buildNeonBar(5, 7, const Color(0xFF14B8A6)),
+                        _buildNeonBar(6, 9, const Color(0xFF14B8A6)),
                       ],
                     ),
                   ),
@@ -148,39 +125,32 @@ class DashboardScreen extends StatelessWidget {
                 if (lowestSubject != null) ...[
                   const Text(
                     'Needs Attention',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFFF1F2), Color(0xFFFFE4E6)],
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: const Color(0xFFFECDD3), width: 1),
-                    ),
+                  GlassCard(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      contentPadding: EdgeInsets.zero,
                       leading: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF43F5E).withValues(alpha: 0.1),
+                          color: const Color(0xFFF43F5E).withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.trending_down_rounded, color: Color(0xFFF43F5E)),
+                        child: const Icon(Icons.trending_down_rounded, color: Color(0xFFFDA4AF)),
                       ),
                       title: Text(
                         lowestSubject.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF881337)),
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
                       ),
                       subtitle: Text(
                         'Completion: ${(lowestSubject.completionPercentage * 100).toInt()}%',
-                        style: const TextStyle(color: Color(0xFFBE123C)),
+                        style: const TextStyle(color: Color(0xFFFDA4AF)),
                       ),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Color(0xFFBE123C)),
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.white50),
                     ),
                   ),
-                  const SizedBox(height: 32),
                 ]
               ],
             ),
@@ -190,72 +160,48 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  BarChartGroupData _buildAnimatedBar(int x, double y, Color color) {
+  BarChartGroupData _buildNeonBar(int x, double y, Color color) {
     return BarChartGroupData(
       x: x,
       barRods: [
         BarChartRodData(
           toY: y,
           gradient: LinearGradient(
-            colors: [color.withValues(alpha: 0.7), color],
+            colors: [color.withValues(alpha: 0.6), color],
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
           ),
-          width: 22,
+          width: 20,
           borderRadius: BorderRadius.circular(6),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: 10,
-            color: color.withValues(alpha: 0.05),
+            color: Colors.white.withValues(alpha: 0.05),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildGradientCard(BuildContext context, String title, String value, IconData icon, List<Color> gradientColors) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: gradientColors.last.withValues(alpha: 0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20.0),
+  Widget _buildGlassSummaryCard(String title, String value, IconData icon, Color color) {
+    return GlassCard(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(icon, color: Colors.white.withValues(alpha: 0.8), size: 28),
+          Icon(icon, color: color, size: 32),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 32, 
-                  fontWeight: FontWeight.bold, 
-                  color: Colors.white,
-                  height: 1.0
-                ),
+                style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white, height: 1.0),
               ),
               const SizedBox(height: 4),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 14, 
-                  color: Colors.white.withValues(alpha: 0.9),
-                  fontWeight: FontWeight.w500
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.7), fontWeight: FontWeight.w600),
               ),
             ],
           ),
