@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'screens/main_screen.dart';
+import 'providers/study_provider.dart';
 
 void main() {
-  runApp(const StudyPlannerApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => StudyProvider(),
+      child: const StudyPlannerApp(),
+    ),
+  );
 }
 
 class StudyPlannerApp extends StatelessWidget {
