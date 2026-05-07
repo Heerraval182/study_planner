@@ -1,4 +1,5 @@
 import 'package:uuid/uuid.dart';
+import 'package:hive/hive.dart';
 
 const uuid = Uuid();
 
@@ -6,6 +7,21 @@ enum TopicStatus {
   notStarted,
   inProgress,
   completed
+}
+
+class TopicStatusAdapter extends TypeAdapter<TopicStatus> {
+  @override
+  final int typeId = 0;
+
+  @override
+  TopicStatus read(BinaryReader reader) {
+    return TopicStatus.values[reader.readByte()];
+  }
+
+  @override
+  void write(BinaryWriter writer, TopicStatus obj) {
+    writer.writeByte(obj.index);
+  }
 }
 
 class Topic {
@@ -20,6 +36,29 @@ class Topic {
     required this.estimatedHours,
     this.status = TopicStatus.notStarted,
   }) : id = id ?? uuid.v4();
+}
+
+class TopicAdapter extends TypeAdapter<Topic> {
+  @override
+  final int typeId = 1;
+
+  @override
+  Topic read(BinaryReader reader) {
+    return Topic(
+      id: reader.readString(),
+      name: reader.readString(),
+      estimatedHours: reader.readDouble(),
+      status: reader.read(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Topic obj) {
+    writer.writeString(obj.id);
+    writer.writeString(obj.name);
+    writer.writeDouble(obj.estimatedHours);
+    writer.write(obj.status);
+  }
 }
 
 class Subject {
@@ -41,6 +80,30 @@ class Subject {
   }
 }
 
+class SubjectAdapter extends TypeAdapter<Subject> {
+  @override
+  final int typeId = 2;
+
+  @override
+  Subject read(BinaryReader reader) {
+    final id = reader.readString();
+    final name = reader.readString();
+    final topicsList = reader.readList();
+    return Subject(
+      id: id,
+      name: name,
+      topics: topicsList.cast<Topic>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Subject obj) {
+    writer.writeString(obj.id);
+    writer.writeString(obj.name);
+    writer.writeList(obj.topics);
+  }
+}
+
 class StudySession {
   final String id;
   String subjectId;
@@ -55,4 +118,29 @@ class StudySession {
     required this.date,
     required this.durationHours,
   }) : id = id ?? uuid.v4();
+}
+
+class StudySessionAdapter extends TypeAdapter<StudySession> {
+  @override
+  final int typeId = 3;
+
+  @override
+  StudySession read(BinaryReader reader) {
+    return StudySession(
+      id: reader.readString(),
+      subjectId: reader.readString(),
+      topicId: reader.readString(),
+      date: DateTime.fromMillisecondsSinceEpoch(reader.readInt()),
+      durationHours: reader.readDouble(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, StudySession obj) {
+    writer.writeString(obj.id);
+    writer.writeString(obj.subjectId);
+    writer.writeString(obj.topicId);
+    writer.writeInt(obj.date.millisecondsSinceEpoch);
+    writer.writeDouble(obj.durationHours);
+  }
 }

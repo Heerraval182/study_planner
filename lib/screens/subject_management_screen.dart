@@ -88,6 +88,11 @@ class SubjectManagementScreen extends StatelessWidget {
               if (controller.text.isNotEmpty) {
                 Provider.of<StudyProvider>(context, listen: false).addSubject(controller.text);
                 Navigator.pop(context);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Please enter a subject name.'),
+                  backgroundColor: Colors.red,
+                ));
               }
             },
             child: const Text('Add'),
@@ -129,6 +134,11 @@ class SubjectManagementScreen extends StatelessWidget {
                   double.tryParse(hoursController.text) ?? 1.0,
                 );
                 Navigator.pop(context);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Please enter valid details.'),
+                  backgroundColor: Colors.red,
+                ));
               }
             },
             child: const Text('Add'),

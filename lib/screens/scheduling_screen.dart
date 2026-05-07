@@ -151,6 +151,11 @@ class _SchedulingScreenState extends State<SchedulingScreen> {
                                   double.tryParse(_durationController.text) ?? 1.0,
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session Scheduled!')));
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text('Please select a subject and a topic.'),
+                                  backgroundColor: Colors.red,
+                                ));
                               }
                             },
                             child: const Text('Schedule Session', style: TextStyle(fontSize: 16)),

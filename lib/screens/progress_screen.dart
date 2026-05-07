@@ -80,7 +80,6 @@ class ProgressScreen extends StatelessWidget {
         statusColor = Colors.orange;
         break;
       case TopicStatus.notStarted:
-      default:
         statusColor = Colors.grey;
     }
 

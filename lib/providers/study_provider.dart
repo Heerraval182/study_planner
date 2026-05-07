@@ -1,17 +1,23 @@
 import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import '../models/models.dart';
 
 class StudyProvider with ChangeNotifier {
-  final List<Subject> _subjects = [];
-  final List<StudySession> _sessions = [];
+  late Box<Subject> _subjectsBox;
+  late Box<StudySession> _sessionsBox;
 
-  List<Subject> get subjects => [..._subjects];
-  List<StudySession> get sessions => [..._sessions];
-
-  // Initialize with some mock data for development
   StudyProvider() {
-    _initMockData();
+    _subjectsBox = Hive.box<Subject>('subjectsBox');
+    _sessionsBox = Hive.box<StudySession>('sessionsBox');
+    
+    // If the database is empty, we can optionally load some mock data
+    if (_subjectsBox.isEmpty) {
+      _initMockData();
+    }
   }
+
+  List<Subject> get subjects => _subjectsBox.values.toList();
+  List<StudySession> get sessions => _sessionsBox.values.toList()..sort((a, b) => a.date.compareTo(b.date));
 
   void _initMockData() {
     final math = Subject(name: 'Mathematics');
@@ -21,52 +27,63 @@ class StudyProvider with ChangeNotifier {
     final physics = Subject(name: 'Physics');
     physics.topics.add(Topic(name: 'Quantum Mechanics', estimatedHours: 5.0));
 
-    _subjects.addAll([math, physics]);
+    _subjectsBox.put(math.id, math);
+    _subjectsBox.put(physics.id, physics);
     
-    _sessions.add(StudySession(
+    final session = StudySession(
       subjectId: math.id,
       topicId: math.topics[1].id,
       date: DateTime.now().add(const Duration(days: 1)),
       durationHours: 2.0,
-    ));
+    );
+    _sessionsBox.put(session.id, session);
   }
 
   // Subject Management
   void addSubject(String name) {
-    _subjects.add(Subject(name: name));
+    final newSubject = Subject(name: name);
+    _subjectsBox.put(newSubject.id, newSubject);
     notifyListeners();
   }
 
   void addTopic(String subjectId, String topicName, double hours) {
-    final subject = _subjects.firstWhere((s) => s.id == subjectId);
-    subject.topics.add(Topic(name: topicName, estimatedHours: hours));
-    notifyListeners();
+    final subject = _subjectsBox.get(subjectId);
+    if (subject != null) {
+      subject.topics.add(Topic(name: topicName, estimatedHours: hours));
+      _subjectsBox.put(subject.id, subject); // Save back to Hive
+      notifyListeners();
+    }
   }
 
   // Progress Tracking
   void updateTopicStatus(String subjectId, String topicId, TopicStatus status) {
-    final subject = _subjects.firstWhere((s) => s.id == subjectId);
-    final topic = subject.topics.firstWhere((t) => t.id == topicId);
-    topic.status = status;
-    notifyListeners();
+    final subject = _subjectsBox.get(subjectId);
+    if (subject != null) {
+      final topicIndex = subject.topics.indexWhere((t) => t.id == topicId);
+      if (topicIndex != -1) {
+        subject.topics[topicIndex].status = status;
+        _subjectsBox.put(subject.id, subject); // Save back to Hive
+        notifyListeners();
+      }
+    }
   }
 
   // Scheduling
   void scheduleSession(String subjectId, String topicId, DateTime date, double duration) {
-    _sessions.add(StudySession(
+    final session = StudySession(
       subjectId: subjectId,
       topicId: topicId,
       date: date,
       durationHours: duration,
-    ));
-    _sessions.sort((a, b) => a.date.compareTo(b.date));
+    );
+    _sessionsBox.put(session.id, session);
     notifyListeners();
   }
 
   // Priority logic
   Subject? get lowestCompletionSubject {
-    if (_subjects.isEmpty) return null;
-    return _subjects.reduce((curr, next) => 
+    if (_subjectsBox.isEmpty) return null;
+    return _subjectsBox.values.reduce((curr, next) => 
         curr.completionPercentage < next.completionPercentage ? curr : next);
   }
 }
