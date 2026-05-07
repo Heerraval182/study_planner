@@ -169,7 +169,7 @@ class _SchedulingScreenState extends State<SchedulingScreen> {
                         title: Text('${subj.name} - ${topic.name}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                         subtitle: Row(
                           children: [
-                            const Icon(Icons.access_time_rounded, size: 14, color: Colors.white50),
+                            const Icon(Icons.access_time_rounded, size: 14, color: Colors.white54),
                             const SizedBox(width: 4),
                             Text('${DateFormat.jm().format(session.date)} (${session.durationHours} hrs)', style: const TextStyle(color: Colors.white70)),
                           ],

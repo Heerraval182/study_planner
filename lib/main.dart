@@ -48,7 +48,7 @@ class StudyPlannerApp extends StatelessWidget {
           primary: Color(0xFF6366F1), // Neon Indigo
           secondary: Color(0xFF14B8A6), // Teal
           surface: Colors.transparent,
-          background: Colors.transparent,
+          surface: Colors.transparent,
         ),
         appBarTheme: const AppBarTheme(
           centerTitle: true,
@@ -77,7 +77,7 @@ class StudyPlannerApp extends StatelessWidget {
             borderSide: const BorderSide(color: Color(0xFF14B8A6), width: 2),
           ),
           labelStyle: const TextStyle(color: Colors.white70),
-          hintStyle: const TextStyle(color: Colors.white50),
+          hintStyle: const TextStyle(color: Colors.white54),
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         ),
       ),

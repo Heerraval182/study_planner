@@ -89,7 +89,7 @@ class ProgressScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       ...subject.topics.map((t) => _buildTopicTile(context, subject.id, t, provider)),
                     ] else
-                       const Text('No topics added yet.', style: TextStyle(color: Colors.white50, fontStyle: FontStyle.italic)),
+                       const Text('No topics added yet.', style: TextStyle(color: Colors.white54, fontStyle: FontStyle.italic)),
                   ],
                 ),
               );

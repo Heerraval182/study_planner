@@ -84,9 +84,9 @@ class SubjectManagementScreen extends StatelessWidget {
                           children: [
                             ...subject.topics.map((t) => ListTile(
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-                                  leading: const Icon(Icons.commit_rounded, color: Colors.white50, size: 20),
+                                  leading: const Icon(Icons.commit_rounded, color: Colors.white54, size: 20),
                                   title: Text(t.name, style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white)),
-                                  subtitle: Text('Est. time: ${t.estimatedHours} hrs', style: const TextStyle(color: Colors.white50)),
+                                  subtitle: Text('Est. time: ${t.estimatedHours} hrs', style: const TextStyle(color: Colors.white54)),
                                 )),
                             Padding(
                               padding: const EdgeInsets.all(20.0),

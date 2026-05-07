@@ -148,7 +148,7 @@ class DashboardScreen extends StatelessWidget {
                         'Completion: ${(lowestSubject.completionPercentage * 100).toInt()}%',
                         style: const TextStyle(color: Color(0xFFFDA4AF)),
                       ),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.white50),
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.white54),
                     ),
                   ),
                 ]
