@@ -36,6 +36,24 @@ class Topic {
     required this.estimatedHours,
     this.status = TopicStatus.notStarted,
   }) : id = id ?? uuid.v4();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'estimatedHours': estimatedHours,
+      'status': status.index,
+    };
+  }
+
+  factory Topic.fromMap(Map<String, dynamic> map) {
+    return Topic(
+      id: map['id'],
+      name: map['name'],
+      estimatedHours: (map['estimatedHours'] as num).toDouble(),
+      status: TopicStatus.values[map['status'] ?? 0],
+    );
+  }
 }
 
 class TopicAdapter extends TypeAdapter<Topic> {
@@ -72,6 +90,24 @@ class Subject {
     List<Topic>? topics,
   })  : id = id ?? uuid.v4(),
         topics = topics ?? [];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'topics': topics.map((t) => t.toMap()).toList(),
+    };
+  }
+
+  factory Subject.fromMap(Map<String, dynamic> map) {
+    return Subject(
+      id: map['id'],
+      name: map['name'],
+      topics: (map['topics'] as List?)
+          ?.map((t) => Topic.fromMap(Map<String, dynamic>.from(t)))
+          .toList(),
+    );
+  }
 
   double get completionPercentage {
     if (topics.isEmpty) return 0.0;
@@ -118,6 +154,26 @@ class StudySession {
     required this.date,
     required this.durationHours,
   }) : id = id ?? uuid.v4();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'subjectId': subjectId,
+      'topicId': topicId,
+      'date': date.millisecondsSinceEpoch,
+      'durationHours': durationHours,
+    };
+  }
+
+  factory StudySession.fromMap(Map<String, dynamic> map) {
+    return StudySession(
+      id: map['id'],
+      subjectId: map['subjectId'],
+      topicId: map['topicId'],
+      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      durationHours: (map['durationHours'] as num).toDouble(),
+    );
+  }
 }
 
 class StudySessionAdapter extends TypeAdapter<StudySession> {

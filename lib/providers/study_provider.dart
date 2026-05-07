@@ -1,15 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/models.dart';
 
 class StudyProvider with ChangeNotifier {
   late Box<Subject> _subjectsBox;
   late Box<StudySession> _sessionsBox;
+  final _db = FirebaseFirestore.instance;
 
   StudyProvider() {
     _subjectsBox = Hive.box<Subject>('subjectsBox');
     _sessionsBox = Hive.box<StudySession>('sessionsBox');
     
+    // Attempt to sync from Firestore on startup
+    syncFromFirestore();
+
     // If the database is empty, we can optionally load some mock data
     if (_subjectsBox.isEmpty) {
       _initMockData();
@@ -43,6 +48,7 @@ class StudyProvider with ChangeNotifier {
   void addSubject(String name) {
     final newSubject = Subject(name: name);
     _subjectsBox.put(newSubject.id, newSubject);
+    _db.collection('subjects').doc(newSubject.id).set(newSubject.toMap());
     notifyListeners();
   }
 
@@ -51,6 +57,7 @@ class StudyProvider with ChangeNotifier {
     if (subject != null) {
       subject.topics.add(Topic(name: topicName, estimatedHours: hours));
       _subjectsBox.put(subject.id, subject); // Save back to Hive
+      _db.collection('subjects').doc(subject.id).set(subject.toMap());
       notifyListeners();
     }
   }
@@ -63,6 +70,7 @@ class StudyProvider with ChangeNotifier {
       if (topicIndex != -1) {
         subject.topics[topicIndex].status = status;
         _subjectsBox.put(subject.id, subject); // Save back to Hive
+        _db.collection('subjects').doc(subject.id).set(subject.toMap());
         notifyListeners();
       }
     }
@@ -77,7 +85,27 @@ class StudyProvider with ChangeNotifier {
       durationHours: duration,
     );
     _sessionsBox.put(session.id, session);
+    _db.collection('sessions').doc(session.id).set(session.toMap());
     notifyListeners();
+  }
+
+  Future<void> syncFromFirestore() async {
+    try {
+      final subjectsSnap = await _db.collection('subjects').get();
+      for (var doc in subjectsSnap.docs) {
+        final subject = Subject.fromMap(doc.data());
+        _subjectsBox.put(subject.id, subject);
+      }
+
+      final sessionsSnap = await _db.collection('sessions').get();
+      for (var doc in sessionsSnap.docs) {
+        final session = StudySession.fromMap(doc.data());
+        _sessionsBox.put(session.id, session);
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Firestore sync failed: $e');
+    }
   }
 
   // Priority logic

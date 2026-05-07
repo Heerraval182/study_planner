@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'screens/main_screen.dart';
 import 'providers/study_provider.dart';
@@ -9,6 +10,12 @@ import 'models/models.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
+  }
   
   await Hive.initFlutter();
   Hive.registerAdapter(TopicStatusAdapter());
@@ -47,7 +54,6 @@ class StudyPlannerApp extends StatelessWidget {
         colorScheme: const ColorScheme.dark(
           primary: Color(0xFF6366F1), // Neon Indigo
           secondary: Color(0xFF14B8A6), // Teal
-          surface: Colors.transparent,
           surface: Colors.transparent,
         ),
         appBarTheme: const AppBarTheme(
